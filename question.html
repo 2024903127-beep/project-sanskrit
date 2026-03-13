@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>One Last Question… 💭</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --rose: #e8516a;
+      --deep: #c0324f;
+      --petal: #fbbdcc;
+      --gold: #d4af7a;
+      --dark: #0f0408;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: var(--dark);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Stars */
+    .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star {
+      position: absolute; border-radius: 50%; background: white;
+      animation: twinkle var(--d) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.1; } to { opacity: 0.9; }
+    }
+
+    /* Floating hearts */
+    .heart-float {
+      position: fixed; font-size: 22px;
+      pointer-events: none; z-index: 1;
+      animation: floatUp linear infinite;
+      opacity: 0;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(110vh) scale(0.5) rotate(-10deg); opacity: 0; }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-10vh) scale(1.2) rotate(10deg); opacity: 0; }
+    }
+
+    /* Scene */
+    .scene {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .intro-label {
+      font-family: 'Dancing Script', cursive;
+      color: var(--petal);
+      font-size: clamp(18px, 3.5vw, 26px);
+      margin-bottom: 52px;
+      opacity: 0;
+      text-shadow: 0 0 24px rgba(232,81,106,0.5);
+      animation: fadeIn 1s ease 0.5s both;
+    }
+
+    /* Question display */
+    .question-box {
+      max-width: 600px; width: 100%;
+      margin-bottom: 64px;
+    }
+
+    .question-text {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: white;
+      font-size: clamp(28px, 6vw, 54px);
+      line-height: 1.25;
+      min-height: 80px;
+      letter-spacing: 0.02em;
+      text-shadow:
+        0 0 40px rgba(232,81,106,0.8),
+        0 0 80px rgba(232,81,106,0.4);
+      position: relative;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1em;
+      background: var(--rose);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 0.8s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0; }
+    }
+    .cursor.hidden { display: none; }
+
+    /* Question mark deco */
+    .question-deco {
+      font-size: clamp(100px, 20vw, 160px);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(232,81,106,0.05);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      pointer-events: none;
+      user-select: none;
+      z-index: -1;
+    }
+
+    /* Buttons */
+    .buttons {
+      display: flex; gap: 32px; align-items: center;
+      flex-wrap: wrap; justify-content: center;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .buttons.visible {
+      opacity: 1; transform: translateY(0);
+    }
+
+    .btn-yes {
+      padding: 20px 72px;
+      background: linear-gradient(135deg, #ff6b8a, var(--rose), #b02a45);
+      color: white;
+      border: none;
+      border-radius: 60px;
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(24px, 5vw, 34px);
+      cursor: pointer;
+      box-shadow:
+        0 12px 40px rgba(232,81,106,0.6),
+        0 0 0 1px rgba(212,175,122,0.3);
+      transition: all 0.3s ease;
+      animation: yesGlow 2s ease-in-out infinite;
+      letter-spacing: 0.03em;
+    }
+    .btn-yes:hover {
+      transform: translateY(-5px) scale(1.08);
+      box-shadow: 0 20px 60px rgba(232,81,106,0.85), 0 0 50px rgba(232,81,106,0.4);
+    }
+    @keyframes yesGlow {
+      0%,100% { box-shadow: 0 12px 40px rgba(232,81,106,0.6), 0 0 0 1px rgba(212,175,122,0.3); }
+      50%      { box-shadow: 0 12px 60px rgba(232,81,106,0.9), 0 0 50px rgba(232,81,106,0.4); }
+    }
+
+    .btn-no {
+      padding: 20px 56px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 60px;
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(20px, 4vw, 28px);
+      cursor: not-allowed;
+      pointer-events: none;
+      letter-spacing: 0.03em;
+      position: relative;
+    }
+    .btn-no::after {
+      content: '😶';
+      position: absolute;
+      top: -28px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 22px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    /* Tooltip on no hover attempt - but it's disabled anyway */
+    .no-wrapper { position: relative; }
+    .no-wrapper:hover .no-tooltip {
+      opacity: 1; transform: translateY(0);
+    }
+    .no-tooltip {
+      position: absolute;
+      bottom: 110%; left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      background: rgba(20,5,12,0.95);
+      color: var(--petal);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 16px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(232,81,106,0.3);
+    }
+
+    /* Explosion overlay on Yes */
+    .explosion {
+      display: none;
+      position: fixed; inset: 0;
+      z-index: 200;
+      background: radial-gradient(ellipse at center, rgba(232,81,106,0.15), transparent 70%);
+      pointer-events: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .explosion.go {
+      display: flex;
+      animation: explode 0.6s ease both;
+    }
+    @keyframes explode {
+      0%  { opacity: 0; }
+      30% { opacity: 1; }
+      100%{ opacity: 0; }
+    }
+    .explosion-emoji {
+      font-size: 80px;
+      animation: spinOut 0.6s ease both;
+    }
+    @keyframes spinOut {
+      from { transform: scale(0) rotate(-180deg); }
+      to   { transform: scale(4) rotate(0deg); opacity: 0; }
+    }
+
+    /* Redirect overlay */
+    .redirect-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      z-index: 300;
+      background: rgba(10,2,6,0.97);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .redirect-overlay.show {
+      display: flex;
+      animation: fadeIn 0.5s ease both;
+    }
+    .redirect-msg {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--petal);
+      font-size: clamp(24px, 5vw, 40px);
+      text-align: center;
+      animation: heartbeat 1s ease-in-out infinite;
+    }
+    .redirect-hearts {
+      font-size: 52px;
+      animation: heartbeat 1s ease-in-out infinite;
+      letter-spacing: 12px;
+    }
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); } 50% { transform: scale(1.15); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* Sparkle burst */
+    .sparkle-burst {
+      position: fixed;
+      pointer-events: none; z-index: 500;
+      font-size: 30px;
+      animation: burstOut 1s ease-out forwards;
+    }
+    @keyframes burstOut {
+      0%  { transform: scale(0); opacity: 1; }
+      60% { transform: scale(1.8); opacity: 1; }
+      100%{ transform: scale(0.5); opacity: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .buttons { gap: 20px; }
+      .btn-yes { padding: 18px 52px; }
+      .btn-no  { padding: 18px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Floating hearts bg -->
+<div id="floatingHearts"></div>
+
+<!-- Music -->
+<audio id="bgMusic" loop>
+  <source src="musicpage3.mp3" type="audio/mpeg">
+</audio>
+
+<div class="scene">
+  <div class="intro-label">💫 One last little question for you… 💫</div>
+
+  <div class="question-box">
+    <div class="question-deco">?</div>
+    <div class="question-text" id="questionText">
+      <span id="typed"></span><span class="cursor" id="cursor"></span>
+    </div>
+  </div>
+
+  <div class="buttons" id="buttons">
+    <button class="btn-yes" id="yesBtn" onclick="handleYes()">
+      Yes 💖
+    </button>
+    <div class="no-wrapper">
+      <div class="no-tooltip">Aww, come on… 🥺</div>
+      <button class="btn-no" disabled>No 🙃</button>
+    </div>
+  </div>
+</div>
+
+<!-- Explosion -->
+<div class="explosion" id="explosion">
+  <div class="explosion-emoji">💖</div>
+</div>
+
+<!-- Redirect overlay -->
+<div class="redirect-overlay" id="redirectOverlay">
+  <div class="redirect-hearts">💖 💗 💖</div>
+  <div class="redirect-msg">I knew it… 😊<br/>Sending you my love right now…</div>
+  <div class="redirect-hearts" style="font-size:36px">🥰 💌 🥰</div>
+</div>
+
+<script>
+  // ---- Config ----
+  const QUESTION = "Can we kiss again? 💋";
+  // WhatsApp number (Indian format, no +)
+  const WA_NUMBER = "918287034496";
+  const WA_MESSAGE = encodeURIComponent(
+    "Hey baby! 💖 I just saw your birthday surprise and... YES! Of course we can kiss again! 😘 I love you so much! Happy Birthday to me, and thank you for making this day so magical! 🌹💕"
+  );
+  const WA_URL = `https://wa.me/${WA_NUMBER}?text=${WA_MESSAGE}`;
+
+  // ---- Stars ----
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 150; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2.5 + 0.4;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*3+1).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;`;
+    starsEl.appendChild(s);
+  }
+
+  // ---- Floating hearts ----
+  const heartContainer = document.getElementById('floatingHearts');
+  const heartEmojis = ['💖','💗','💕','💓','💝','🌹','✨'];
+  for (let i = 0; i < 20; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart-float';
+    h.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+    const dur = (Math.random()*10+8).toFixed(1);
+    h.style.cssText = `left:${Math.random()*95}%;animation-duration:${dur}s;animation-delay:${(Math.random()*10).toFixed(1)}s;font-size:${Math.random()*16+14}px;`;
+    heartContainer.appendChild(h);
+  }
+
+  // ---- Typewriter ----
+  let typed = '';
+  const typedEl = document.getElementById('typed');
+  const cursor = document.getElementById('cursor');
+  const buttonsEl = document.getElementById('buttons');
+  const question = QUESTION;
+  let idx = 0;
+
+  function typeChar() {
+    if (idx < question.length) {
+      typed += question[idx];
+      typedEl.textContent = typed;
+      idx++;
+      const delay = question[idx-1] === ' ' ? 80 :
+                    question[idx-1] === ',' ? 300 :
+                    question[idx-1] === '?' ? 400 :
+                    Math.random() * 60 + 50;
+      setTimeout(typeChar, delay);
+    } else {
+      cursor.classList.add('hidden');
+      // Show buttons
+      setTimeout(() => {
+        buttonsEl.classList.add('visible');
+      }, 500);
+    }
+  }
+
+  // Start typing after 1.8s
+  setTimeout(typeChar, 1800);
+
+  // ---- Music ----
+  document.addEventListener('click', () => {
+    const m = document.getElementById('bgMusic');
+    if (m && m.paused) m.play().catch(()=>{});
+  }, { once: true });
+  window.addEventListener('load', () => {
+    document.getElementById('bgMusic').play().catch(()=>{});
+  });
+
+  // ---- Yes handler ----
+  function handleYes() {
+    // Spawn sparkles
+    const sparkles = ['💖','✨','🌹','💫','🎉','💕','🌸'];
+    for (let i = 0; i < 18; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'sparkle-burst';
+        el.textContent = sparkles[Math.floor(Math.random()*sparkles.length)];
+        el.style.left = Math.random()*90 + 5 + 'vw';
+        el.style.top  = Math.random()*80 + 10 + 'vh';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1100);
+      }, i * 80);
+    }
+
+    // Explosion flash
+    const exp = document.getElementById('explosion');
+    exp.classList.add('go');
+    setTimeout(() => exp.classList.remove('go'), 700);
+
+    // Show redirect overlay
+    setTimeout(() => {
+      document.getElementById('redirectOverlay').classList.add('show');
+    }, 700);
+
+    // Redirect to WhatsApp
+    setTimeout(() => {
+      window.location.href = WA_URL;
+    }, 2800);
+  }
+</script>
+</body>
+</html>

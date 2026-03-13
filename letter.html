@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Letter To You 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --rose: #e8516a;
+      --deep: #c0324f;
+      --blush: #fde8ec;
+      --petal: #fbbdcc;
+      --gold: #d4af7a;
+      --dark: #1a0a10;
+      --ink: #2c0d1a;
+      --paper: #fffaf5;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: var(--dark);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Stars bg */
+    .stars {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+    .star {
+      position: absolute; border-radius: 50%; background: white;
+      animation: twinkle var(--d) ease-in-out infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.1; } to { opacity: 0.9; }
+    }
+
+    /* Petals */
+    .petal {
+      position: fixed; top: -60px;
+      font-size: 20px; pointer-events: none; z-index: 1;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg); opacity: 0.7; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Layout */
+    .page {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 100px;
+    }
+
+    .page-heading {
+      font-family: 'Dancing Script', cursive;
+      color: var(--petal);
+      font-size: clamp(20px, 4vw, 30px);
+      margin-bottom: 48px;
+      text-align: center;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 30px rgba(232,81,106,0.6);
+      animation: fadeDown 1s ease both;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Letter paper */
+    .letter-paper {
+      position: relative;
+      max-width: 640px; width: 100%;
+      background: var(--paper);
+      border-radius: 4px 4px 4px 4px;
+      box-shadow:
+        0 40px 100px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(212,175,122,0.3),
+        4px 4px 0 rgba(212,175,122,0.2),
+        8px 8px 0 rgba(212,175,122,0.1);
+      overflow: hidden;
+      animation: paperReveal 1.2s cubic-bezier(.2,.8,.2,1) 0.3s both;
+    }
+    @keyframes paperReveal {
+      from { opacity: 0; transform: scale(0.92) translateY(30px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Paper texture lines */
+    .letter-paper::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        transparent,
+        transparent 30px,
+        rgba(192,50,79,0.07) 30px,
+        rgba(192,50,79,0.07) 31px
+      );
+      top: 100px;
+      pointer-events: none;
+    }
+
+    /* Red margin line */
+    .letter-paper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 72px;
+      width: 1px; height: 100%;
+      background: rgba(232,81,106,0.25);
+      z-index: 1;
+    }
+
+    /* Header stripe */
+    .letter-header {
+      background: linear-gradient(135deg, #7a1030, #c0324f, #e8516a);
+      padding: 28px 40px;
+      text-align: center;
+      position: relative;
+    }
+    .letter-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: white;
+      font-size: clamp(24px, 5vw, 38px);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .letter-header .hearts {
+      font-size: 22px; margin-top: 8px; letter-spacing: 6px;
+      animation: heartbeat 1.6s ease-in-out infinite;
+    }
+    @keyframes heartbeat {
+      0%,100% { transform: scale(1); } 14% { transform: scale(1.2); } 28% { transform: scale(1); }
+    }
+
+    /* Letter body */
+    .letter-body {
+      padding: 44px 44px 44px 88px;
+      position: relative; z-index: 2;
+    }
+
+    .letter-date {
+      font-family: 'Dancing Script', cursive;
+      color: var(--deep);
+      font-size: 18px;
+      text-align: right;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1.2s both;
+    }
+
+    .salutation {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(20px, 3.5vw, 26px);
+      color: var(--deep);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1.4s both;
+    }
+
+    .letter-para {
+      font-size: clamp(16px, 2.5vw, 19px);
+      color: var(--ink);
+      line-height: 1.95;
+      margin-bottom: 22px;
+      font-weight: 300;
+    }
+
+    /* Staggered paragraph reveals */
+    .letter-para:nth-child(1) { animation: fadeIn 0.7s ease 1.6s both; }
+    .letter-para:nth-child(2) { animation: fadeIn 0.7s ease 2.0s both; }
+    .letter-para:nth-child(3) { animation: fadeIn 0.7s ease 2.4s both; }
+    .letter-para:nth-child(4) { animation: fadeIn 0.7s ease 2.8s both; }
+    .letter-para:nth-child(5) { animation: fadeIn 0.7s ease 3.2s both; }
+    .letter-para:nth-child(6) { animation: fadeIn 0.7s ease 3.6s both; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .letter-highlight {
+      color: var(--deep);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+
+    .letter-closing {
+      margin-top: 36px;
+      text-align: right;
+      opacity: 0;
+      animation: fadeIn 0.7s ease 4.0s both;
+    }
+    .letter-closing p {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+    .letter-closing .signature {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(26px, 5vw, 38px);
+      color: var(--deep);
+      margin-top: 10px;
+      display: block;
+    }
+
+    /* Heart divider */
+    .heart-divider {
+      text-align: center;
+      font-size: 20px;
+      margin: 28px 0;
+      letter-spacing: 8px;
+      color: var(--rose);
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1.8s both;
+    }
+
+    /* Surprise button */
+    .surprise-section {
+      max-width: 640px; width: 100%;
+      margin-top: 52px;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 4.5s both;
+    }
+
+    .surprise-label {
+      font-family: 'Dancing Script', cursive;
+      color: var(--petal);
+      font-size: clamp(18px, 3vw, 24px);
+      margin-bottom: 20px;
+      text-shadow: 0 0 20px rgba(232,81,106,0.5);
+    }
+
+    .surprise-btn {
+      display: inline-block;
+      padding: 18px 56px;
+      background: linear-gradient(135deg, #ff6b8a, var(--rose), var(--deep));
+      color: white;
+      border: none;
+      border-radius: 60px;
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(20px, 4vw, 26px);
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow:
+        0 10px 36px rgba(232,81,106,0.55),
+        0 0 0 1px rgba(212,175,122,0.3);
+      animation: pulseBig 2.2s ease-in-out infinite;
+      transition: all 0.3s ease;
+      letter-spacing: 0.04em;
+    }
+    .surprise-btn:hover {
+      transform: translateY(-4px) scale(1.06);
+      box-shadow: 0 20px 56px rgba(232,81,106,0.7);
+    }
+    @keyframes pulseBig {
+      0%,100% { box-shadow: 0 10px 36px rgba(232,81,106,0.55), 0 0 0 1px rgba(212,175,122,0.3); }
+      50%      { box-shadow: 0 10px 60px rgba(232,81,106,0.85), 0 0 40px rgba(232,81,106,0.35), 0 0 0 1px rgba(212,175,122,0.5); }
+    }
+
+    /* Decorative rose corners */
+    .corner-rose {
+      position: absolute;
+      font-size: 32px;
+      pointer-events: none;
+      animation: float 3s ease-in-out infinite alternate;
+    }
+    @keyframes float {
+      from { transform: translateY(0) rotate(-5deg); }
+      to   { transform: translateY(-10px) rotate(5deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Petals -->
+<div id="petals"></div>
+
+<!-- Music -->
+<audio id="bgMusic" loop>
+  <source src="musicpage2.mp3" type="audio/mpeg">
+</audio>
+
+<div class="page">
+  <div class="page-heading">✨ A letter written just for you… ✨</div>
+
+  <div class="letter-paper">
+
+    <!-- Corner roses (decorative) -->
+    <div class="corner-rose" style="bottom:24px;right:24px;animation-delay:.6s">🌹</div>
+
+    <!-- Header -->
+    <div class="letter-header">
+      <h1>Happy Birthday, My Love</h1>
+      <div class="hearts">💖 💗 💖 💗 💖</div>
+    </div>
+
+    <!-- Body -->
+    <div class="letter-body">
+      <div class="letter-date">Today — Your Special Day 🌹</div>
+
+      <div class="salutation">My Dearest,</div>
+
+      <div class="letter-para">
+        On this beautiful day that the world gets to celebrate you, I want you to know just how much
+        <span class="letter-highlight">your existence has changed everything for me.</span>
+        You came into my life like a soft light that slowly lit up every dark corner I never even knew existed.
+      </div>
+
+      <div class="heart-divider">~ 💖 ~</div>
+
+      <div class="letter-para">
+        Every single morning I wake up and the first thought in my heart is <span class="letter-highlight">you.</span>
+        Your laugh, your voice, the way your eyes get all soft when you're happy — I could spend
+        a thousand lifetimes just falling in love with those little things, over and over again.
+      </div>
+
+      <div class="letter-para">
+        You are not just someone I love — you are the person I want to <span class="letter-highlight">choose every single day.</span>
+        In all the versions of my life, in every story I could have lived, I would always find my way to you.
+        Always. Without question.
+      </div>
+
+      <div class="letter-para">
+        Thank you for your warmth, your kindness, your patience with me.
+        Thank you for the quiet moments, the stolen glances, the way you make even the most ordinary day feel
+        <span class="letter-highlight">extraordinary</span> just by being in it with me.
+      </div>
+
+      <div class="letter-para">
+        Today, on your birthday, I wish you everything the world has that is beautiful —
+        because nothing less is worthy of <span class="letter-highlight">someone as wonderful as you.</span>
+        I love you more than words in any letter could ever hold.
+      </div>
+
+      <div class="letter-closing">
+        <p>Forever and always, all of me is yours.</p>
+        <span class="signature">With all my love 💌</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Surprise button -->
+  <div class="surprise-section">
+    <div class="surprise-label">🎀 There's one more little surprise waiting… 🎀</div>
+    <a class="surprise-btn" href="question.html">Open The Last Surprise 🌹</a>
+  </div>
+</div>
+
+<script>
+  // Stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 130; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2.5 + 0.4;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*3+1).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s;`;
+    starsEl.appendChild(s);
+  }
+
+  // Petals
+  const petalContainer = document.getElementById('petals');
+  const emojis = ['🌸','🌺','🌹','✨','💫','💮'];
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.cssText = `left:${Math.random()*100}%;animation-duration:${(Math.random()*8+6).toFixed(1)}s;animation-delay:${(Math.random()*8).toFixed(1)}s;font-size:${Math.random()*14+12}px;`;
+    petalContainer.appendChild(p);
+  }
+
+  // Music
+  document.addEventListener('click', () => {
+    const m = document.getElementById('bgMusic');
+    if (m && m.paused) m.play().catch(()=>{});
+  }, { once: true });
+  // Auto-try
+  window.addEventListener('load', () => {
+    document.getElementById('bgMusic').play().catch(()=>{});
+  });
+</script>
+</body>
+</html>
